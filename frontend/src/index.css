@@ -1,0 +1,61 @@
+:root {
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --bg: #0f1419;
+  --card-bg: #1a2332;
+  --input-bg: #1e2a3a;
+  --border: #2d3a4d;
+  --text: #e7e9ea;
+  --text-muted: #8b98a5;
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  --accent-dim: rgba(245, 158, 11, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f0f2f5;
+    --card-bg: #ffffff;
+    --input-bg: #f7f8fa;
+    --border: #e1e8ed;
+    --text: #0f1419;
+    --text-muted: #536471;
+    --accent: #d97706;
+    --accent-hover: #b45309;
+    --accent-dim: rgba(217, 119, 6, 0.15);
+  }
+}
