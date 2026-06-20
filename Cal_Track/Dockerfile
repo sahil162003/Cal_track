@@ -1,31 +1,26 @@
-# Multi-stage build for Cal_Track (Auth Service)
-# Stage 1: Build the application
+# Stage 1: Build
 FROM eclipse-temurin:21-jdk-alpine AS build
+
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
 COPY .mvn/ .mvn
 COPY mvnw .
 COPY pom.xml .
 
-# Download dependencies (cached layer if pom.xml doesn't change)
 RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
 
-# Copy source code
 COPY src ./src
 
-# Build the application
 RUN ./mvnw clean package -DskipTests -B
 
-# Stage 2: Runtime image
+
+# Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
+
 WORKDIR /app
 
-# Copy the built JAR from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Expose port
-EXPOSE 8081
+EXPOSE 8080
 
-# Run application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
