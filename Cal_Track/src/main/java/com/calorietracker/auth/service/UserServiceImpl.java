@@ -34,6 +34,7 @@ public class UserServiceImpl implements UserService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
+        System.out.println("user saved register");
     }
 
     @Override

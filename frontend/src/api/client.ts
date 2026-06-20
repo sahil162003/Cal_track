@@ -2,9 +2,13 @@ const API_BASE = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'ht
 
 const getToken = (): string | null => localStorage.getItem('token');
 
+interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
+  body?: unknown;
+}
+
 export async function apiFetch<T>(
   path: string,
-  options: RequestInit & { body?: object } = {}
+  options: ApiRequestOptions = {}
 ): Promise<T> {
   const { body, ...rest } = options;
   const headers: HeadersInit = {

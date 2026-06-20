@@ -39,7 +39,7 @@ services:
   api-gateway:
     build: ./Api-Gateway-Service
     ports:
-      - "8080:8080"
+      - "8090:8090"
     depends_on:
       - calorie-service
       - auth-service
