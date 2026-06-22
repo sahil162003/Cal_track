@@ -48,6 +48,7 @@ public class CalorieController {
 
     @GetMapping("/today/total")
     public int total(Authentication auth) {
+
         return calorieService.getTodayTotal(auth.getName());
     }
 

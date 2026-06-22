@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URL}
+          predicates:
+            - Path=/api/auth/**
+
+        - id: calorie-service
+          uri: ${CALORIE_SERVICE_URL}
+          predicates:
+            - Path=/api/calorie/**
+
+jwt:
+  secret: ${JWT_SECRET}
