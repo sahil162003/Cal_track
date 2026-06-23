@@ -1,7 +1,7 @@
 const API_BASE =
   import.meta.env.VITE_API_URL ||
   "https://api-gateway-cal-track.onrender.com";
-
+console.log("API_BASE =", API_BASE);
 const getToken = (): string | null => localStorage.getItem('token');
 
 interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
