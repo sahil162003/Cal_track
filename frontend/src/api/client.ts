@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? '' : 'http://localhost:8080');
+const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  "https://api-gateway-cal-track.onrender.com";
 
 const getToken = (): string | null => localStorage.getItem('token');
 
