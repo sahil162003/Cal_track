@@ -1,6 +1,24 @@
 spring:
   cloud:
     gateway:
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "https://frontend-cal-track.onrender.com"
+
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+
+            allowedHeaders: "*"
+
+            allowCredentials: true
+
       routes:
 
         - id: auth-service
