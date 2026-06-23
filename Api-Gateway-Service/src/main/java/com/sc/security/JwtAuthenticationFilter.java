@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,11 @@ public class JwtAuthenticationFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
+        // IMPORTANT: Allow CORS preflight requests
+        if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
+            return chain.filter(exchange);
+        }
+
         String path = exchange.getRequest().getURI().getPath();
 
         // Public endpoints
@@ -45,55 +51,58 @@ public class JwtAuthenticationFilter implements WebFilter {
                 .getFirst(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.err.println("Missing or invalid Authorization header. Header: " + authHeader);
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+            exchange.getResponse()
+                    .setStatusCode(HttpStatus.UNAUTHORIZED);
+
             return exchange.getResponse().setComplete();
         }
 
         try {
-            String token = authHeader.substring(7);
-            System.out.println("Validating JWT token for path: " + path);
 
-            // Validate JWT and extract claims
+            String token = authHeader.substring(7);
+
             Claims claims = Jwts.parser()
                     .verifyWith(key)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-            
-            System.out.println("JWT token validated successfully");
 
-            // Extract username from claims (adjust based on your JWT structure)
             String username = claims.getSubject();
+
             if (username == null) {
                 username = claims.get("sub", String.class);
             }
+
             if (username == null) {
                 username = claims.get("username", String.class);
             }
-            if (username == null) {
-                username = "user"; // fallback
-            }
 
-            // Create authentication object
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                    new SimpleGrantedAuthority("ROLE_USER")
-            );
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    username, 
-                    null, 
-                    authorities
-            );
+            List<SimpleGrantedAuthority> authorities =
+                    Collections.singletonList(
+                            new SimpleGrantedAuthority("ROLE_USER")
+                    );
 
-            // Set authentication in SecurityContext and continue filter chain
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            authorities
+                    );
+
             return chain.filter(exchange)
-                    .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+                    .contextWrite(
+                            ReactiveSecurityContextHolder
+                                    .withAuthentication(authentication)
+                    );
 
         } catch (Exception e) {
-            // Log the exception for debugging
-            System.err.println("JWT validation failed: " + e.getMessage());
+
             e.printStackTrace();
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+            exchange.getResponse()
+                    .setStatusCode(HttpStatus.UNAUTHORIZED);
+
             return exchange.getResponse().setComplete();
         }
     }
